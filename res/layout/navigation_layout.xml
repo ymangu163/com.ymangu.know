@@ -10,14 +10,14 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:text="slidingMenu"
+            android:text="导航页"
             android:gravity="center"
             android:background="@drawable/titlebar_bg"
             android:textColor="@color/white"
             android:textSize="22sp" />
     
-  <!--   <include 
+    <include 
         layout="@layout/navigation_sub_layout"
-        /> -->
+        />
     
 </LinearLayout>

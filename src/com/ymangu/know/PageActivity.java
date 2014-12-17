@@ -48,6 +48,7 @@ public class PageActivity extends Activity {
 		
 		sm.setMenu(R.layout.navigation_layout);//设置slidingmenu显示的layout
 		
+		new NavigationHandler(this);//实现导航页的动画需要的代码量比较大，所以写在单独的类中。
 	}
 	//将滑动的Activity转成view
 	@SuppressWarnings("deprecation")
