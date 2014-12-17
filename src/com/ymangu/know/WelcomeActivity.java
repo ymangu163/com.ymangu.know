@@ -1,6 +1,7 @@
 package com.ymangu.know;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -42,8 +43,10 @@ public class WelcomeActivity extends Activity {
 		//动画执行结束的时候去主页面
 		@Override
 		public void onAnimationEnd(Animation animation) {
-			
-			
+			Intent intent=new Intent();
+			intent.setClass(WelcomeActivity.this, PageActivity.class);  //另一种写法而以
+			startActivity(intent);
+			finish();  //跳转后，让自己销毁
 			
 		}
 
@@ -52,14 +55,10 @@ public class WelcomeActivity extends Activity {
 		}
 		
 	};
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+    //让它在这个Activity中按返回 不退出
+	@Override
+	public void onBackPressed() {
+		
+	}
+		
 }
