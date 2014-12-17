@@ -15,7 +15,7 @@
         android:theme="@android:style/Theme.Light.NoTitleBar" >
         <activity
             android:name=".WelcomeActivity"
-           android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+           android:theme="@android:style/Theme.Light.NoTitleBar"
              >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
