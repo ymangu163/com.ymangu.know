@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.lidroid.xutils.util.LogUtils;
 import com.ymangu.know.anim.ExpandAnimation;
-import com.ymangu.know.domain.ViewBean;
+import com.ymangu.know.bean.ViewBean;
 /**
  * 前提：将所有的title和对应的layout封装ViewBean中，然后将所有ViewBean放到List中
  * 

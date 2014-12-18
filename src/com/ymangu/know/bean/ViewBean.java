@@ -1,4 +1,4 @@
-package com.ymangu.know.domain;
+package com.ymangu.know.bean;
 
 import android.view.View;
 	/**
