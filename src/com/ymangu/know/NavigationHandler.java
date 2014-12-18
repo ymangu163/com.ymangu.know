@@ -21,13 +21,15 @@ import com.ymangu.know.domain.ViewBean;
  * 1.点击任意一个title的时候，将该title对应的隐藏的layout显示出来，并将该title置为选中状态
  * 2.在点击其他title的时候，需要判断之前有没有打开过动画
  * 3.如果打开过，需要将之前打开的动画关闭，并且将之前的按下效果恢复成默认
- * 
+ *  
  */
+
+
 public class NavigationHandler {
 	private Activity activity;
 	private List<ViewBean> viewList;
 	private boolean animState=true;  //标记是否可以执行动画
-
+	private View lastView;  //记住上次点击的item，让它关闭
 	
 	public NavigationHandler(Activity activity) {
 		this.activity=activity;
@@ -157,6 +159,13 @@ public class NavigationHandler {
 	 * 执行动画
 	 * @param viewLayout
 	 */
+	
+	/**
+	 * . 逻辑梳理：
+	 *  ① 第一次进来，传入viewLayout,默认真为true 可以执行动画，开始执行动画
+	 *  ② 第二次进来，又传入一个viewLayout，假如动画执行完毕，如果不是当前图标的话，又会执行一次executeAnimation()
+	 *  ③ 这时，动画是关闭的，把它恢复正常
+	 **/
 	protected void executeAnimation(View viewTitle, View viewLayout) {
 		/**
 		 * 执行动画的view如果是隐藏状态，自动展开，展开后将其设置为可见状态
@@ -184,10 +193,63 @@ public class NavigationHandler {
 				
 				//判断是哪个item按下，设置不同图标
 				setPress(icon,myTitle);
-				
+				/**
+				 * 如果lastView == null 
+				 * 说明之前没有执行过动画
+				 * != null ?
+				 * 说明执行过动画，再执行动画的时候需要将lastview给收回，收回之后再执行当前的动画
+				 */
+				if (lastView == null) {
+					lastView = viewLayout;					
+				}else{
+					if (lastView == viewLayout) { //是不是点击自己
+						lastView = null;		  				//点击自己，则收起 		为null就会收起
+					}else{
+						executeAnimation(viewTitle, lastView);
+						lastView = viewLayout;
+					}		
+					
+				}
 				
 			}else{//当前动画已经关闭
+				/**
+				 * . 这里不用了
+				 **/
+//				//将title设置为恢复正常状态
+//				RelativeLayout title = (RelativeLayout) viewTitle;
+//				title.setBackgroundResource(R.drawable.business_hall_selector_normall);
+//				ImageView icon = (ImageView) title.getChildAt(0);//左侧图标
+//				ImageView arrow = (ImageView) title.getChildAt(2);//拿到箭头
+//				arrow.setImageResource(R.drawable.arrow_right);//设置为默认的灰色箭头
+//				
+//				//拿到title第1个孩子的第0个孩子，TextView
+//				LinearLayout ll = (LinearLayout) title.getChildAt(1);
+//				TextView tv = (TextView) ll.getChildAt(0);
+//				setNormal(icon,tv);
 				
+				/**
+				 * 打开第二个动画的时候，需要将上一个viewLayout(lastView)对应的title恢复为正常的状态
+				 */
+				for (ViewBean bean : viewList) {
+					if (lastView == bean.getViewLayout()) {//找到lastView对应的那个viewbean
+						RelativeLayout myTitle = (RelativeLayout)bean.getViewTitle();
+						myTitle.setBackgroundResource(R.drawable.business_hall_selector_normall);//lastView对应title背景恢复为默认
+						
+						ImageView myArrow = (ImageView) myTitle.getChildAt(2);
+						myArrow.setImageResource(R.drawable.arrows_right_normal);//将lastview对应title的箭头设置为默认灰色
+						
+						ImageView myIcon = (ImageView) myTitle.getChildAt(0);//lastview对应title的左侧图标
+						
+						LinearLayout myLL = (LinearLayout) myTitle.getChildAt(1);
+						TextView myTv = (TextView) myLL.getChildAt(0);
+						setNormal(myIcon,myTv);
+						
+						if (lastView == bean.getViewLayout()) { //点击的是当前item
+							lastView = null;
+						}
+						
+					}
+				}
 				
 			}
 			
@@ -207,7 +269,35 @@ public class NavigationHandler {
 		
 		
 	}
-	
+	//将title设置为恢复正常状态
+	private void setNormal(ImageView img, TextView tv) {
+		String str = tv.getText().toString();
+		if (!TextUtils.isEmpty(str)) {
+			if (str.contains(activity.getString(R.string.business_hall))) {
+				img.setImageResource(R.drawable.find_businesshall);
+			} else if (str.contains(activity.getString(R.string.international_roaming))) {
+				img.setImageResource(R.drawable.internation_roaming);
+			} else if (str.contains(activity.getString(R.string.mobile_mobile))) {
+				img.setImageResource(R.drawable.find_cellphone);
+			} else if (str.contains(activity.getString(R.string.packge_name))) {
+				img.setImageResource(R.drawable.mobile_package);
+			} else if (str.contains(activity.getString(R.string.telephone_charge))) {
+				img.setImageResource(R.drawable.query_fee);
+			} else if (str.contains(activity.getString(R.string.service_phone_number))) {
+				img.setImageResource(R.drawable.call_customer_service_telephone);
+			} else if (str.contains(activity.getString(R.string.tang_poetry))) {
+				img.setImageResource(R.drawable.tang_poetry);
+			} else if (str.contains(activity.getString(R.string.joke))) {
+				img.setImageResource(R.drawable.joke);
+			} else if (str.contains(activity.getString(R.string.myapp))) {
+				img.setImageResource(R.drawable.app_btn_normal);
+			} else if (str.contains(activity.getString(R.string.mm))) {
+				img.setImageResource(R.drawable.online_service_normal);
+			}			
+		}
+		
+	}
+
 	//设置按下时各item图标,根据title中的string 判断
 	private void setPress(ImageView img, TextView tv) {
 		String str = tv.getText().toString();
