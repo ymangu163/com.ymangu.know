@@ -5,8 +5,12 @@ import java.util.List;
 
 import android.app.Activity;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.RelativeLayout;
 
+import com.lidroid.xutils.util.LogUtils;
+import com.ymangu.know.anim.ExpandAnimation;
 import com.ymangu.know.domain.ViewBean;
 /**
  * 前提：将所有的title和对应的layout封装ViewBean中，然后将所有ViewBean放到List中
@@ -19,7 +23,8 @@ import com.ymangu.know.domain.ViewBean;
 public class NavigationHandler {
 	private Activity activity;
 	private List<ViewBean> viewList;
-	
+	private boolean animState=true;  //标记是否可以执行动画
+
 	
 	public NavigationHandler(Activity activity) {
 		this.activity=activity;
@@ -109,13 +114,100 @@ public class NavigationHandler {
 				bean.setViewTitle(appTitle);
 				bean.setViewLayout(appLayout);
 				viewList.add(bean);
-								
-	
+				
+				// 把初始化好的List数据源传入				
+				setAnimation(viewList); 
+		
+		
+	}
+
+	private void setAnimation(List<ViewBean> viewList2) {
+		//给title设置点击事件，但是执行动画的是title对应的layout
+		for(ViewBean bean:viewList){
+			final View viewTitle = bean.getViewTitle();   //得到title，触发的开关
+			final View viewLayout = bean.getViewLayout();  //得到layout,由它执行动画
+			viewTitle.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					//给title对应的layout执行动画的操作
+					executeAnimation(viewTitle,viewLayout);
+					
+					
+				}
+			});
+			
+			
+		}
+		
+		
+		
+		
+		
 		
 		
 	}
 	
 	
+	/**
+	 * 执行动画
+	 * @param viewLayout
+	 */
+	protected void executeAnimation(View viewTitle, View viewLayout) {
+		/**
+		 * 执行动画的view如果是隐藏状态，自动展开，展开后将其设置为可见状态
+		 * 执行动画的view如果是可见状态，自动隐藏，隐藏后将其设置为不可见状态。
+		 */
+		
+		if (animState) { //表示当前可以执行动画
+			ExpandAnimation anim = new ExpandAnimation(viewLayout, 300); //用开源项目的动画
+			// true 已展开，false 已关闭
+			boolean toggle = anim.toggle();  
+			if (toggle) {//表示当前动画已经展开
+				
+				
+				
+				
+			}else{//当前动画已经关闭
+				
+				
+			}
+			
+			
+			
+			
+			viewLayout.startAnimation(anim); //让viewLayout执行动画
+			anim.setAnimationListener(animationListener); //动画监听
+			
+		}else{  //表示当前不可以执行动画
+			LogUtils.d( "can't play animation");
+			
+		}
+
+		
+		
+		
+		
+	}
+	
+	//动画监听事件
+	private Animation.AnimationListener animationListener=new Animation.AnimationListener() {
+		
+		@Override
+		public void onAnimationStart(Animation animation) {
+			
+		}
+		
+		@Override
+		public void onAnimationRepeat(Animation animation) {
+			
+		}
+		
+		@Override
+		public void onAnimationEnd(Animation animation) {
+			
+		}
+	};
 	
 	
 	
