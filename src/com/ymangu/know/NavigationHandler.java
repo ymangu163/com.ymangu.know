@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.lidroid.xutils.util.LogUtils;
 import com.ymangu.know.anim.ExpandAnimation;
@@ -58,6 +61,7 @@ public class NavigationHandler {
 				bean = new ViewBean();
 				bean.setViewTitle(cellPhoneTitle);
 				bean.setViewLayout(cellPhoneLayout);		
+				viewList.add(bean);
 		
 				//初始化套餐
 				RelativeLayout packageTitle = (RelativeLayout) view.findViewById(R.id.package_title);
@@ -164,8 +168,22 @@ public class NavigationHandler {
 			// true 已展开，false 已关闭
 			boolean toggle = anim.toggle();  
 			if (toggle) {//表示当前动画已经展开
+				//设置当前layout对应的title为按下状态
+				viewTitle.setBackgroundResource(R.drawable.business_hall_selector_pressed);//将当前title设置为按下的效果
+				//viewTitle中的child 也要改变成按下状态
+				RelativeLayout title = (RelativeLayout)viewTitle;
+				//① 获得title的第1个孩子的第0个孩子的title
+				LinearLayout ll = (LinearLayout) title.getChildAt(1); 
+				TextView myTitle = (TextView) ll.getChildAt(0);
 				
+				//②拿到title的第0个孩子，imageview
+				ImageView icon = (ImageView) title.getChildAt(0);
+				//③ 拿到title的箭头图标，箭头是一样的，不用判断哪个按下
+				ImageView arrow = (ImageView) title.getChildAt(2);
+				arrow.setImageResource(R.drawable.arrows_right_press);
 				
+				//判断是哪个item按下，设置不同图标
+				setPress(icon,myTitle);
 				
 				
 			}else{//当前动画已经关闭
@@ -190,22 +208,48 @@ public class NavigationHandler {
 		
 	}
 	
+	//设置按下时各item图标,根据title中的string 判断
+	private void setPress(ImageView img, TextView tv) {
+		String str = tv.getText().toString();
+		if (!TextUtils.isEmpty(str)) { // 判断是不是空
+			if (str.contains(activity.getString(R.string.business_hall))) {//设置营业厅
+				img.setImageResource(R.drawable.find_businesshall_press);
+			} else if (str.contains(activity.getString(R.string.international_roaming))) {//国际漫游
+				img.setImageResource(R.drawable.internation_roaming_press);
+			} else if (str.contains(activity.getString(R.string.mobile_mobile))) {//手机
+				img.setImageResource(R.drawable.find_cellphone_press);
+			} else if (str.contains(activity.getString(R.string.packge_name))) {//套餐
+				img.setImageResource(R.drawable.mobile_package_press);
+			} else if (str.contains(activity.getString(R.string.telephone_charge))) {//查询余额
+				img.setImageResource(R.drawable.query_fee_press);
+			} else if (str.contains(activity.getString(R.string.service_phone_number))) {//客户电话
+				img.setImageResource(R.drawable.call_customer_service_telephone_press);
+			} else if (str.contains(activity.getString(R.string.tang_poetry))) {//背唐诗
+				img.setImageResource(R.drawable.tang_poetry_press);
+			} else if (str.contains(activity.getString(R.string.joke))) {//讲笑话
+				img.setImageResource(R.drawable.joke_press);
+			} else if (str.contains(activity.getString(R.string.myapp))) {//找应用
+				img.setImageResource(R.drawable.app_btn_pressed);
+			} else if (str.contains(activity.getString(R.string.mm))) {//找美女
+				img.setImageResource(R.drawable.online_service_pressed);
+			}			
+		}	
+	}
+
 	//动画监听事件
 	private Animation.AnimationListener animationListener=new Animation.AnimationListener() {
-		
 		@Override
 		public void onAnimationStart(Animation animation) {
-			
+			animState = false;
 		}
 		
 		@Override
 		public void onAnimationRepeat(Animation animation) {
-			
 		}
 		
 		@Override
 		public void onAnimationEnd(Animation animation) {
-			
+			animState = true;
 		}
 	};
 	
