@@ -3,10 +3,10 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
 		android:state_pressed="true"
-		android:drawable="@color/green" />
+		android:drawable="@drawable/iask_detail_answer_begin_pressed" />
 	<item
 		android:state_focused="true"
-		android:drawable="@color/green" />
+		android:drawable="@drawable/iask_detail_answer_begin_pressed" />
 	<item
-		android:drawable="@android:color/transparent" />
+		android:drawable="@drawable/iask_detail_answer_begin_normal" />
 </selector>

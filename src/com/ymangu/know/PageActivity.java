@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.LocalActivityManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -18,6 +19,19 @@ import com.ymangu.know.adapter.ViewPagerAdapter;
  * 一般情况下，ViewPager滑动view或者是Fragment
  * 滑动的activity的生命周期方法只有onCreate会被调用，onResume ... 不会被调用
  */
+
+/**
+ * . Activity 与Fragment 方式使用 SlidingMenu的不同
+① 得到SlidingMenu对象的区别：
+    	Activity: 获得 SlidingMenu对象是 new SlidingMenu()
+    	Fragment: Activity 继承自SlidingFragmentActivity,通过 getSlidingMenu得到 SlidingMenu
+ ② 设置SlidingMenu使用的布局的区别：
+ 	Activity:  sm.setMenu(layout  res  id)
+ 	Fragment:  setBehindContentView(R.layout.menu_frame);  FramLayout 用来装载Fragment 
+     继承自 SlidingFragmentActivity 使用的布局文件是一个全屏的FramLayout,
+ 	 slidingMenu 的主页面的内容也是Framement来显示；
+ **/
+
 // PageActivity 包函 MainActivity和 IAskActivity.
 public class PageActivity extends Activity {
 	@ViewInject(R.id.pager)
@@ -31,11 +45,50 @@ public class PageActivity extends Activity {
 		setContentView(R.layout.pager_layout);
 		ViewUtils.inject(this);
 		
+		viewPager.setOnPageChangeListener(onPageChangeListener);
+		
+		
 		//将滑动的Activity转成view,ViewPager只能添加View		
 		 lam = new LocalActivityManager(this, true);
 		 lam.dispatchCreate(savedInstanceState);  //这个方法必须被调用不能会崩掉
 		initActivity();
 		
+		initSlidingMenu();
+	}
+	
+	private ViewPager.OnPageChangeListener onPageChangeListener=new ViewPager.OnPageChangeListener() {
+		
+		@Override
+		public void onPageSelected(int position) {
+			//目的：让viewpager第一页的时候滑出slidingmenu，第二页滑动的时候回到第一页
+			switch (position) {
+			case 0:
+				sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);//只有在首页时才允许滑出slidingmenu
+				break;
+			case 1:
+				sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);//
+				break;
+			default:
+				sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);//在viewpager的其他页的时候，不允许滑出slidingmenu
+				break;					
+			}
+			
+		}
+		
+		@Override
+		public void onPageScrolled(int arg0, float arg1, int arg2) {
+			
+		}
+		
+		@Override
+		public void onPageScrollStateChanged(int arg0) {
+			
+		}
+	};
+	
+	
+	
+	private void initSlidingMenu() {
 		//实例化一个slidingmenu
 		sm = new SlidingMenu(this);
 		sm.setMode(SlidingMenu.LEFT);   //slidingmenu出现的屏幕左右方向
@@ -50,6 +103,7 @@ public class PageActivity extends Activity {
 		
 		new NavigationHandler(this);//实现导航页的动画需要的代码量比较大，所以写在单独的类中。
 	}
+	
 	//将滑动的Activity转成view
 	@SuppressWarnings("deprecation")
 	private void initActivity() {

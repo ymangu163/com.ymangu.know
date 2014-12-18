@@ -8,5 +8,5 @@
 		android:state_focused="true"
 		android:drawable="@color/green" />
 	<item
-		android:drawable="@android:color/transparent" />
+		android:drawable="@color/transparent" />
 </selector>

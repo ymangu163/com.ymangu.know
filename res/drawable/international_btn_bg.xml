@@ -3,10 +3,10 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
 		android:state_pressed="true"
-		android:drawable="@color/green" />
+		android:drawable="@drawable/international_roaming_btn_selected" />
 	<item
 		android:state_focused="true"
-		android:drawable="@color/green" />
+		android:drawable="@drawable/international_roaming_btn_selected" />
 	<item
-		android:drawable="@android:color/transparent" />
+		android:drawable="@drawable/international_roaming_btn_normal" />
 </selector>
