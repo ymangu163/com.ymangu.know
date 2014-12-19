@@ -2,6 +2,7 @@ package com.ymangu.know.ui;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -59,6 +60,38 @@ public class UpdateView {
 			}
 			
 		});
+	}
+	
+	//更新它的对话
+	public void updatSheView(String jokeAnswer) {
+
+		View sheView = InflateView.inflateSheView(context);
+		TextView date = (TextView) sheView.findViewById(R.id.messagedetail_row_date);
+		TextView sheTv = (TextView) sheView.findViewById(R.id.messagedetail_row_text);
+		sheTv.setText(jokeAnswer);
+		date.setText(DateUtil.getCurrentTime());
+		this.player.play(jokeAnswer);  //调用 语音播放
+		baseLayout.addView(sheView);
+		
+		scrollToBottom();
+		
+		
+	}
+	
+	//更新MM图片
+	public void updateMMView(String string, int mmAnswer) {
+		View mmView = InflateView.inflateMMView(context);
+		TextView tv = (TextView) mmView.findViewById(R.id.messagedetail_row_text);
+		ImageView mm = (ImageView) mmView.findViewById(R.id.image_mm);
+		
+		tv.setText(string);
+		mm.setImageResource(mmAnswer);
+		this.player.play(string);
+		baseLayout.addView(mmView);
+		
+		scrollToBottom();
+		
+		
 	}
 	
 	
