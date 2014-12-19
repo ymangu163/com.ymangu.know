@@ -1,7 +1,15 @@
 package com.ymangu.know;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,6 +19,7 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.lidroid.xutils.ViewUtils;
+import com.lidroid.xutils.util.LogUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.ymangu.know.utils.Constants;
 
@@ -31,18 +40,88 @@ public class MainActivity extends Activity implements OnClickListener {
 	private ScrollView srollView;
 	
 	private boolean voiceState = true;
+	private ConnectivityManager cm;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
+		super.onCreate(savedInstanceState);		
 		setContentView(R.layout.main);
-		ViewUtils.inject(this);
+		ViewUtils.inject(this);    //注入View
 	
-		initView();
-		
-		
+		initView();  //初始化View
+		checkNet();  // 一上来就检测一下网络
+		registerBroadcast(); //注册监听网络状态的广播
 	}
+	
+	//注册监听网络状态改变的广播
+	private void registerBroadcast() {
+		IntentFilter netFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+		netFilter.addCategory(Intent.CATEGORY_DEFAULT);
+		registerReceiver(netReceive, netFilter);
+	}
+	
+	//定义监听网络状态的广播接收者
+	private BroadcastReceiver netReceive = new BroadcastReceiver() {
 
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+				//获得系统的连接管理器，网络管理器
+				//获得激活的网络信息
+				NetworkInfo info = cm.getActiveNetworkInfo();
+			
+//				boolean available = info.isAvailable();	 //当前网络是否有效			
+//				boolean connected = info.isConnected();	//当前网络是否已连接				
+//				String netType = info.getTypeName();//当前网络的类型 "WIFI" 
+				if (info != null && info.isAvailable() && info.isConnected()) {
+					//网络是可用的
+					netLayout.setVisibility(View.GONE);					
+				}else{
+					//当前网络不可用
+					netLayout.setVisibility(View.VISIBLE);				
+					LogUtils.d("网络不可用");
+				}
+			}
+			
+		}
+	};
+	
+	/**
+	 * .1. 被动方式(不推荐)：后台运行一个线程，每隔几秒监测一下当前网络情况
+	 * 2. 监听一个系统广播(推荐)：android中当网络状态发生改变时，系统会发送一个网络状态改变的广播。
+	 **/
+	private void checkNet() {
+		//系统网络连接服务管理器
+		 cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		 //记得添加权限，不然会出错
+		 NetworkInfo info = cm.getActiveNetworkInfo();
+			if (info != null && info.isAvailable() && info.isConnected()) {
+				//网络可用
+				netLayout.setVisibility(View.GONE);
+			} else {
+				//网络不可用
+				netLayout.setVisibility(View.VISIBLE);
+			}
+	}
+	/**
+	 * . 这是被动方式，只用学习写在这里
+	 **/
+	private void checkNetOld() {
+		Timer timer = new Timer();
+		TimerTask task = new TimerTask() {
+			
+			@Override
+			public void run() {
+				ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+				NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+				//监测网络是否可用，如果不可用，再通过handler发送主线程去显示提示
+				
+			}
+		};
+		timer.schedule(task, 1000, 3000);		
+	}
+	
+	
+	
 	private void initView() {
 		switch_text_voice_layout.setOnClickListener(this);
 		back_2_navigation_or_to_voice.setOnClickListener(this);
