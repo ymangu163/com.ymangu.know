@@ -24,6 +24,7 @@ import com.lidroid.xutils.util.LogUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.ymangu.know.utils.BroadcastHelper;
 import com.ymangu.know.utils.Constants;
+import com.ymangu.know.voice.VoiceRecognizer;
 
 public class MainActivity extends Activity implements OnClickListener {
 	@ViewInject(R.id.switch_text_voice_layout)
@@ -52,6 +53,11 @@ public class MainActivity extends Activity implements OnClickListener {
 		initView();  //初始化View
 		checkNet();  // 一上来就检测一下网络
 		registerBroadcast(); //注册监听网络状态的广播
+		
+		//生成语音识别对象
+		voiceRecognizer = new VoiceRecognizer(this);  
+		
+		
 	}
 	
 	//注册监听网络状态改变的广播
@@ -111,6 +117,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			
 		}
 	};
+	private VoiceRecognizer voiceRecognizer;
 	
 	/**
 	 * .1. 被动方式(不推荐)：后台运行一个线程，每隔几秒监测一下当前网络情况
@@ -222,6 +229,10 @@ public class MainActivity extends Activity implements OnClickListener {
 			
 			
 			
+			break;
+			
+		case R.id.voice_start:
+			voiceRecognizer.start();//开始语音识别
 			break;
 		default:
 			break;	
