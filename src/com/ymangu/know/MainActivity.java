@@ -22,6 +22,8 @@ import android.widget.Toast;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.util.LogUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
+import com.ymangu.know.server.MyAsnycTask;
+import com.ymangu.know.ui.UpdateView;
 import com.ymangu.know.utils.BroadcastHelper;
 import com.ymangu.know.utils.Constants;
 import com.ymangu.know.voice.VoicePlayerImpl;
@@ -55,13 +57,23 @@ public class MainActivity extends Activity implements OnClickListener {
 		checkNet();  // 一上来就检测一下网络
 		registerBroadcast(); //注册监听网络状态的广播
 		
-		//生成语音识别对象
-		voiceRecognizer = new VoiceRecognizer(this);  
-		player = new VoicePlayerImpl(this);
+		initClass();
+		
+	
 	
 		
 	}
 	
+	private void initClass() {
+		//生成语音识别对象
+		voiceRecognizer = new VoiceRecognizer(this);  
+		player = new VoicePlayerImpl(this);
+		
+		updateView = new UpdateView(this, scrollView,player);
+		asyncTask = new MyAsnycTask(this,updateView);
+		
+	}
+
 	//注册监听网络状态改变的广播
 	private void registerBroadcast() {
 		//注册监听网络状态改变的广播
@@ -74,9 +86,29 @@ public class MainActivity extends Activity implements OnClickListener {
 		destoryFilter.addCategory(Intent.CATEGORY_DEFAULT);
 		registerReceiver(destoryReceive, destoryFilter);
 		
+		//注册来自导航页的广播
+		IntentFilter navigationFilter = new IntentFilter(Constants.NAVIGATION_STRING_ACTION);
+		navigationFilter.addCategory(Intent.CATEGORY_DEFAULT);
+		registerReceiver(navigationReceive, navigationFilter);
 		
 	}
-	
+	//导航页广播接收者
+	private BroadcastReceiver navigationReceive = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String key = Constants.NAVIGATION_STRING_ACTION_KEY;
+			String result = intent.getStringExtra(key);
+			//更新场景2  -- 更新自己说的话
+			updateView.updateMyView(result);
+			//去找答案
+			asyncTask.queryAnswer(result);
+			LogUtils.d( "导航页传递过来的值为：" + result);
+			
+			
+		}
+		
+	};
 	/**
 	 * 相当于activity的destory方法
 	 */
@@ -86,7 +118,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			if (intent.getAction().equals(Constants.ACTIVITY_DESTORY_ACTION)) {
 				
 				unregisterReceiver(netReceive);//销毁广播
-//				unregisterReceiver(navigationReceive);//销毁广播				
+				unregisterReceiver(navigationReceive);//销毁广播				
 				unregisterReceiver(this);//自杀
 				
 			}
@@ -121,6 +153,9 @@ public class MainActivity extends Activity implements OnClickListener {
 	};
 	private VoiceRecognizer voiceRecognizer;
 	private VoicePlayerImpl player;
+	private ScrollView scrollView;
+	private UpdateView updateView;
+	private MyAsnycTask asyncTask;
 	
 	/**
 	 * .1. 被动方式(不推荐)：后台运行一个线程，每隔几秒监测一下当前网络情况
@@ -164,6 +199,9 @@ public class MainActivity extends Activity implements OnClickListener {
 		back_2_navigation_or_to_voice.setOnClickListener(this);
 		sendbtn_or_to_iask.setOnClickListener(this);
 		voice_start.setOnClickListener(this);		
+		
+		//slidingMenu中的父控件
+		scrollView = (ScrollView) findViewById(R.id.scolllayout);  
 	}
 
 	@Override
@@ -222,11 +260,11 @@ public class MainActivity extends Activity implements OnClickListener {
 				Toast.makeText(this, "viewpager滑动到爱问页面", 0).show();
 				//向pageActivity发送打开爱问页面的广播
 				BroadcastHelper.sendBroadCast(getApplicationContext(), Constants.WHERE_PAGE_ACTION, null, null);
-			} else {
+			} else {  //发送短信
 				//更新场景1
 				String question = text_start.getText().toString();
 				if (!TextUtils.isEmpty(question)) {
-//					asyncTask.queryAnswer(question);
+					asyncTask.queryAnswer(question);
 				}
 			}		
 			
@@ -236,8 +274,8 @@ public class MainActivity extends Activity implements OnClickListener {
 			
 		case R.id.voice_start:
 //			voiceRecognizer.start();//开始语音识别
-//			player.playUI("我好喜欢你啊，做我女友好吧");  //语音播报
-			player.play("我好喜欢你啊，做我女友好吧");  //无UI语音播报
+			player.playUI("我好喜欢你啊，做我女友好吧");  //语音播报
+//			player.play("我好喜欢你啊，做我女友好吧");  //无UI语音播报
 			break;
 		default:
 			break;	

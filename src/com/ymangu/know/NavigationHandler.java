@@ -6,15 +6,19 @@ import java.util.List;
 import android.app.Activity;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.lidroid.xutils.util.LogUtils;
 import com.ymangu.know.anim.ExpandAnimation;
 import com.ymangu.know.bean.ViewBean;
+import com.ymangu.know.utils.BroadcastHelper;
+import com.ymangu.know.utils.Constants;
 /**
  * 前提：将所有的title和对应的layout封装ViewBean中，然后将所有ViewBean放到List中
  * 
@@ -30,9 +34,10 @@ public class NavigationHandler {
 	private List<ViewBean> viewList;
 	private boolean animState=true;  //标记是否可以执行动画
 	private View lastView;  //记住上次点击的item，让它关闭
-	
-	public NavigationHandler(Activity activity) {
+	private SlidingMenu sm;
+	public NavigationHandler(Activity activity,SlidingMenu sm) {
 		this.activity=activity;
+		this.sm = sm;
 		initViews();
 	}
 	
@@ -127,7 +132,7 @@ public class NavigationHandler {
 		
 	}
 
-	private void setAnimation(List<ViewBean> viewList2) {
+	private void setAnimation(List<ViewBean> viewList) {
 		//给title设置点击事件，但是执行动画的是title对应的layout
 		for(ViewBean bean:viewList){
 			final View viewTitle = bean.getViewTitle();   //得到title，触发的开关
@@ -141,20 +146,40 @@ public class NavigationHandler {
 					
 					
 				}
-			});
+			});		
 			
+		}
+		//拿到它的Layout，为Layout中的child添加点击事件
+		for(ViewBean bean:viewList){
+			LinearLayout viewLayout=(LinearLayout)bean.getViewLayout();
+			int count=viewLayout.getChildCount();
+			for(int i=0;i<count;i++){
+				viewLayout.getChildAt(i).setOnClickListener(viewLayoutClickListener);
+				
+			}
+		}
+		
+	}
+	
+	//为每个Layout中的每个textView添加点击事件
+	private OnClickListener viewLayoutClickListener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			TextView tv = (TextView) v;
+			String text = tv.getText().toString();  //得到TextView的内容
+			String action = Constants.NAVIGATION_STRING_ACTION;   //发送到导航页的action
+			String key = Constants.NAVIGATION_STRING_ACTION_KEY;
+			 //发送广播，剩下的交给MainActivity 中接收广播处理
+			BroadcastHelper.sendBroadCast(activity, action, key, text);  
+			sm.toggle();//关闭slidingmenu
 			
 		}
 		
 		
 		
-		
-		
-		
-		
-	}
 	
-	
+	};
 	/**
 	 * 执行动画
 	 * @param viewLayout
