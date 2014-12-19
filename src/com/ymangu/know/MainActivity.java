@@ -24,6 +24,7 @@ import com.lidroid.xutils.util.LogUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.ymangu.know.utils.BroadcastHelper;
 import com.ymangu.know.utils.Constants;
+import com.ymangu.know.voice.VoicePlayerImpl;
 import com.ymangu.know.voice.VoiceRecognizer;
 
 public class MainActivity extends Activity implements OnClickListener {
@@ -56,7 +57,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		
 		//生成语音识别对象
 		voiceRecognizer = new VoiceRecognizer(this);  
-		
+		player = new VoicePlayerImpl(this);
+	
 		
 	}
 	
@@ -118,6 +120,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 	};
 	private VoiceRecognizer voiceRecognizer;
+	private VoicePlayerImpl player;
 	
 	/**
 	 * .1. 被动方式(不推荐)：后台运行一个线程，每隔几秒监测一下当前网络情况
@@ -232,7 +235,9 @@ public class MainActivity extends Activity implements OnClickListener {
 			break;
 			
 		case R.id.voice_start:
-			voiceRecognizer.start();//开始语音识别
+//			voiceRecognizer.start();//开始语音识别
+//			player.playUI("我好喜欢你啊，做我女友好吧");  //语音播报
+			player.play("我好喜欢你啊，做我女友好吧");  //无UI语音播报
 			break;
 		default:
 			break;	
