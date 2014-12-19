@@ -26,6 +26,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.ymangu.know.adapter.ViewPagerAdapter;
+import com.ymangu.know.utils.BroadcastHelper;
 import com.ymangu.know.utils.Constants;
 /**
  * 让ViewPager滑动activity
@@ -92,13 +93,31 @@ public class PageActivity extends Activity implements OnClickListener {
 	
 	 //接收来自MainActivity的广播
 	private void registerBroadcast() {
-		//注册广播
+		//注册slidingMenu滑出的广播
 		IntentFilter smIntentFilter = new IntentFilter(Constants.SLIDING_MENU_ACTION);
 		smIntentFilter.addCategory(Intent.CATEGORY_DEFAULT);
 		registerReceiver(smReceive, smIntentFilter);
 		
-		
+		//注册去往爱问页的广播
+		IntentFilter pageFilter = new IntentFilter(Constants.WHERE_PAGE_ACTION);
+		pageFilter.addCategory(Intent.CATEGORY_DEFAULT);
+		registerReceiver(pageReceive, pageFilter);
 	}
+	
+	/**
+	 * 去往爱问的广播
+	 */
+	private BroadcastReceiver pageReceive = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(Constants.WHERE_PAGE_ACTION)) {
+				viewPager.setCurrentItem(1);   //viewPager跳转
+			}
+		}
+		
+	};
+	
 	// 定义一个广播接收者
 	private BroadcastReceiver smReceive = new BroadcastReceiver() {
 
@@ -269,8 +288,8 @@ public class PageActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		
-//		BroadcastHelper.sendBroadCast(getApplicationContext(), Constants.ACTIVITY_DESTORY_ACTION, null, null);
+		//给 MainActivity 发送一个广播，通过执行了 onDestroy()
+		BroadcastHelper.sendBroadCast(getApplicationContext(), Constants.ACTIVITY_DESTORY_ACTION, null, null);
 		
 		unregisterReceiver(smReceive);
 		smReceive = null;

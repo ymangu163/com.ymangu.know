@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.util.LogUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
+import com.ymangu.know.utils.BroadcastHelper;
 import com.ymangu.know.utils.Constants;
 
 public class MainActivity extends Activity implements OnClickListener {
@@ -54,10 +56,35 @@ public class MainActivity extends Activity implements OnClickListener {
 	
 	//注册监听网络状态改变的广播
 	private void registerBroadcast() {
+		//注册监听网络状态改变的广播
 		IntentFilter netFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
 		netFilter.addCategory(Intent.CATEGORY_DEFAULT);
 		registerReceiver(netReceive, netFilter);
+		
+		//注册activity销毁的广播
+		IntentFilter destoryFilter = new IntentFilter(Constants.ACTIVITY_DESTORY_ACTION);
+		destoryFilter.addCategory(Intent.CATEGORY_DEFAULT);
+		registerReceiver(destoryReceive, destoryFilter);
+		
+		
 	}
+	
+	/**
+	 * 相当于activity的destory方法
+	 */
+	private BroadcastReceiver destoryReceive = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(Constants.ACTIVITY_DESTORY_ACTION)) {
+				
+				unregisterReceiver(netReceive);//销毁广播
+//				unregisterReceiver(navigationReceive);//销毁广播				
+				unregisterReceiver(this);//自杀
+				
+			}
+		}
+	};
+	
 	
 	//定义监听网络状态的广播接收者
 	private BroadcastReceiver netReceive = new BroadcastReceiver() {
@@ -180,7 +207,20 @@ public class MainActivity extends Activity implements OnClickListener {
 				voiceState = true;  //文本模式
 			}
 			break;
-		case R.id.sendbtn_or_to_iask:
+		case R.id.sendbtn_or_to_iask:  //跳到爱问页面
+			if (voiceState) {
+				Toast.makeText(this, "viewpager滑动到爱问页面", 0).show();
+				//向pageActivity发送打开爱问页面的广播
+				BroadcastHelper.sendBroadCast(getApplicationContext(), Constants.WHERE_PAGE_ACTION, null, null);
+			} else {
+				//更新场景1
+				String question = text_start.getText().toString();
+				if (!TextUtils.isEmpty(question)) {
+//					asyncTask.queryAnswer(question);
+				}
+			}		
+			
+			
 			
 			break;
 		default:
@@ -189,5 +229,17 @@ public class MainActivity extends Activity implements OnClickListener {
 		
 	}
 	
+	/**
+	 * .因为MainActivity被转换成了View，加入到ViewPager中。
+	 * MainActivity的生命周期发生了改变，只有onCreate会被执行，所以写在onDestroy()中注销广播的
+	 * 方法不会被执行，怎么办呢？
+	 *  MainActivity 与PageActivity的生命周期是一样的，可以在PageActivity的onDestroy() 中发送一个
+	 *  广播给MainActivity，接收到广播后，写一个相当于onDestroy()的方法 注销广播。 * 
+	 * 
+	 **/
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+	}
 
 }
