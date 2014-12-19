@@ -9,7 +9,9 @@
         android:focusable="true"
         android:visibility="visible"
         >
-        
+        <!-- ScrollView里只放一个元素.  
+ 			 当ScrollView里的元素想填满ScrollView时，使用"fill_parent"是不管用的，
+ 			 必需为ScrollView设置：android:fillViewport="true"。 -->
         <Button
             android:id="@+id/share_icon_layout"
             android:layout_width="50dp"

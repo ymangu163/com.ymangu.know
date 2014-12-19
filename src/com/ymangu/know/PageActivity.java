@@ -9,6 +9,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.lidroid.xutils.ViewUtils;
@@ -19,6 +27,7 @@ import com.ymangu.know.adapter.ViewPagerAdapter;
  * 一般情况下，ViewPager滑动view或者是Fragment
  * 滑动的activity的生命周期方法只有onCreate会被调用，onResume ... 不会被调用
  */
+import com.ymangu.know.utils.DensityUtil;
 
 /**
  * . Activity 与Fragment 方式使用 SlidingMenu的不同
@@ -33,12 +42,20 @@ import com.ymangu.know.adapter.ViewPagerAdapter;
  **/
 
 // PageActivity 包函 MainActivity和 IAskActivity.
-public class PageActivity extends Activity {
+public class PageActivity extends Activity implements OnClickListener {
 	@ViewInject(R.id.pager)
-	private 	android.support.v4.view.ViewPager viewPager;
+	private 	ViewPager viewPager;
+	@ViewInject(R.id.more_btn)
+	private Button moreBtn;  //“：”的按钮
+	@ViewInject(R.id.sub_menu)
+	private LinearLayout subMenu;  //subMenu
+	@ViewInject(R.id.setting_layout)
+	private LinearLayout settingLayout;
+	
+	
 	private LocalActivityManager lam;
 	private SlidingMenu sm;
-	
+	private boolean animState = true;  //记住动画的状态
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -47,6 +64,7 @@ public class PageActivity extends Activity {
 		
 		viewPager.setOnPageChangeListener(onPageChangeListener);
 		
+		initViews();
 		
 		//将滑动的Activity转成view,ViewPager只能添加View		
 		 lam = new LocalActivityManager(this, true);
@@ -54,8 +72,26 @@ public class PageActivity extends Activity {
 		initActivity();
 		
 		initSlidingMenu();
+		
+		//加载动画
+		topDownAnim = AnimationUtils.loadAnimation(this, R.anim.top_dowm);
+		 topUpAnim = AnimationUtils.loadAnimation(this, R.anim.top_up);
+		//设置动画执行后的监听处理
+		topDownAnim.setAnimationListener(topDownAnimListener);
+		topUpAnim.setAnimationListener(topUpAnimListener);
+		 
+		 
+		 
+		
 	}
 	
+	//初始化View
+	private void initViews() {
+		moreBtn.setOnClickListener(this);
+		settingLayout.setOnClickListener(this);   //添加点击事件
+		
+	}
+
 	private ViewPager.OnPageChangeListener onPageChangeListener=new ViewPager.OnPageChangeListener() {
 		
 		@Override
@@ -86,6 +122,58 @@ public class PageActivity extends Activity {
 		}
 	};
 	
+	private Animation topDownAnim;
+	private Animation topUpAnim;
+	//向下动画的监听事件
+	private AnimationListener topDownAnimListener = new AnimationListener(){
+		@Override
+		public void onAnimationStart(Animation animation) {
+		}
+		@Override
+		public void onAnimationEnd(Animation animation) {
+			/**
+			 * 1.让当前动画固定住，不要回到原来的位置
+			 * 2.为了响应点击事件，需要重新设置submenu的位置和宽高
+			 */
+			animation.setFillAfter(true);//动画执行后停住
+			//先设置submenu的宽高, dip2px 在代码中设置dp的一个工具
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+					LayoutParams.MATCH_PARENT, DensityUtil.dip2px(getApplicationContext(),70));
+			
+			//让其在titlebar的下边，因为titlebar是50dp，向下移动50dp，正好就显示出了submenu
+			params.setMargins(0, DensityUtil.dip2px(getApplicationContext(), 50), 0, 0);
+			subMenu.clearAnimation();			//清掉submenu上的动画
+			subMenu.setLayoutParams(params);		//将参数设置给submenu	
+			
+		}
+		@Override
+		public void onAnimationRepeat(Animation animation) {
+		}		
+	};
+	// 向上动画的监听
+	private AnimationListener topUpAnimListener = new AnimationListener() {
+
+		@Override
+		public void onAnimationStart(Animation animation) {
+			
+		}
+
+		@Override
+		public void onAnimationEnd(Animation animation) {
+			animation.setFillAfter(true);
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+					LayoutParams.MATCH_PARENT, DensityUtil.dip2px(getApplicationContext(),70));
+			params.setMargins(0, 0, 0, 0);
+			subMenu.clearAnimation();//清掉submenu上的动画
+			subMenu.setLayoutParams(params);//将参数设置给submenu
+			subMenu.setVisibility(View.GONE);
+		}
+
+		@Override
+		public void onAnimationRepeat(Animation animation) {
+			
+		}
+	};
 	
 	
 	private void initSlidingMenu() {
@@ -125,6 +213,28 @@ public class PageActivity extends Activity {
 		viewPager.setAdapter(adapter); 
 		
 		
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.more_btn:
+			//触发动画，打开动画或者关闭动画
+			if (animState) { 	//true 为 执行向下动画
+				animState = false;
+				subMenu.setVisibility(View.VISIBLE);
+				subMenu.startAnimation(topDownAnim);  //绑定View 开启动画
+				
+			}else{//false 为 执行向上动画
+				animState = true;
+				subMenu.startAnimation(topUpAnim);
+			}
+					
+			break;
+		
+		
+		
+		}
 	}
 	
 	

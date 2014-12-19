@@ -156,7 +156,7 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-    <!-- 显示在最上端  -->
+    <!-- 布局写在下边的，显示在最上端  -->
     <include 
         layout="@layout/title_bar_layout"
         />
