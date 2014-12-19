@@ -5,7 +5,10 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.LocalActivityManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -17,11 +20,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.Toast;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.ymangu.know.adapter.ViewPagerAdapter;
+import com.ymangu.know.utils.Constants;
 /**
  * 让ViewPager滑动activity
  * 一般情况下，ViewPager滑动view或者是Fragment
@@ -80,11 +85,31 @@ public class PageActivity extends Activity implements OnClickListener {
 		topDownAnim.setAnimationListener(topDownAnimListener);
 		topUpAnim.setAnimationListener(topUpAnimListener);
 		 
-		 
-		 
+		 //接收来自MainActivity的广播
+		registerBroadcast();
 		
 	}
 	
+	 //接收来自MainActivity的广播
+	private void registerBroadcast() {
+		//注册广播
+		IntentFilter smIntentFilter = new IntentFilter(Constants.SLIDING_MENU_ACTION);
+		smIntentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+		registerReceiver(smReceive, smIntentFilter);
+		
+		
+	}
+	// 定义一个广播接收者
+	private BroadcastReceiver smReceive = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(Constants.SLIDING_MENU_ACTION)) {
+				sm.toggle();   //把开滑动菜单
+			}
+		}
+		
+	};
 	//初始化View
 	private void initViews() {
 		moreBtn.setOnClickListener(this);
@@ -231,13 +256,25 @@ public class PageActivity extends Activity implements OnClickListener {
 			}
 					
 			break;
-		
-		
+		case R.id.setting_layout:
+			Toast.makeText(getApplicationContext(), "点击了setting 按钮", 0).show();
+			break;
+		default:
+			break;
 		
 		}
 	}
 	
-	
+	// 在onDestroy()中 记得要销毁广播，不然后报错
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		
+//		BroadcastHelper.sendBroadCast(getApplicationContext(), Constants.ACTIVITY_DESTORY_ACTION, null, null);
+		
+		unregisterReceiver(smReceive);
+		smReceive = null;
+	}
 	
 
 }

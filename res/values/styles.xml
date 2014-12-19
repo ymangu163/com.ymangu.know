@@ -1,20 +1,31 @@
 <resources>
 
-    <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    -->
-    <style name="AppBaseTheme" parent="android:Theme.Light">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
+    <style name="AppBaseTheme" parent="android:Theme.Light">     
     </style>
 
-    <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+       <style name="myratingbar" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/my_rating_bar</item>
+        <item name="android:minHeight">10dip</item>
+        <item name="android:maxHeight">15dip</item>
+    </style>
+    
+    <style name="my_iask_detail_edittext_style" parent="@android:style/Widget.EditText">
+        <item name="android:background">@drawable/selector_iask_detail_edittext_bg</item>
+    </style>
+    
+     <style name="my_bottom_edittext_style" parent="@android:style/Widget.EditText">
+        <item name="android:background">@drawable/selector_bottom_edittext_bg</item>
+    </style>
+    
+        <style name="my_edittext_style" parent="@android:style/Widget.EditText">
+        <item name="android:background">@drawable/selector_edittext_bg</item>
+    </style>
+    
+   <style name="my_middle_edittext_style" parent="@android:style/Widget.EditText">
+        <item name="android:background">@drawable/selector_middle_edittext_bg</item>
+    </style> 
+    
 </resources>
