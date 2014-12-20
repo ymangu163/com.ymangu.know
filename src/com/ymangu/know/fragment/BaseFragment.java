@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 /**
  * . ① 继承自v4 包下的Fragment，不然只能在4.0以上用
  *   ②  类中有方法是抽象的，则类也必须是抽象的；抽象类不能被实例化，通过子类来实现抽象方法；
+ *   ③ 用于3.0以下的手机，应继承自 SherlockFragment
  **/
 public abstract class BaseFragment extends Fragment {
 	protected Context ctx;      //上下文对象
