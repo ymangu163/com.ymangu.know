@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="voice_recognition_entries_list_preference">
+        <item>讯飞识别引擎</item>
+        <item>盛大识别引擎</item>
+        <item>谷歌(Google)识别引擎</item>
+        <item>云知声识别引擎</item>
+    </string-array>
+    <string-array name="voice_recognition_entriesvalue_list_preference">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    
+    <string-array name="voice_speech_entries_list_preference">
+        <item>讯飞联网播报</item>
+        <item>听听离线播报(需要插件省流量)</item>
+    </string-array>
+    <string-array name="voice_speech_entriesvalue_list_preference">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    
+    <string-array name="preference_entries_tts_role">
+        <item>晓燕(女生普通话)</item>
+        <item>晓宇(男生普通话)</item>
+        <item>小研(女生普通话)</item>
+        <item>小琪(女生普通话)</item>
+        <item>小峰(男生普通话)</item>
+        <item>小梅(女生粤语)</item>
+        <item>小莉(女生台湾普通话)</item>
+        <item>小蓉(女生四川话)</item>
+        <item>小芸(女生东北话)</item>
+        <item>小坤(男生河南话)</item>
+        <item>小强 (男生湖南话)</item>
+        <item>小莹(女生陕西话)</item>
+        <item>小新(男童普通话)</item>
+        <item>楠楠(女童普通话)</item>
+        <item>老孙(老头普通话)</item>
+    </string-array>
+    <string-array name="preference_values_tts_role">
+        <item>xiaoyan</item>
+        <item>xiaoyu</item>
+        <item>vixy</item>
+        <item>vixq</item>
+        <item>vixf</item>
+        <item>vixm</item>
+        <item>vixl</item>
+        <item>vixr</item>
+        <item>vixyun</item>
+        <item>vixk</item>
+        <item>vixqa</item>
+        <item>vixying</item>
+        <item>vixx</item>
+        <item>vinn</item>
+        <item>vils</item>
+    </string-array>
+    
+    <string-array name="preference_entries_voice_speech">
+        <item ></item>
+    </string-array>
+    <string-array name="preference_values_voice_speech">
+        <item >进入听听中心设置</item>
+    </string-array>
+    
+    <string-array name="allow_anim_entries_list_preference">
+        <item>启用动画</item>
+        <item>关闭动画</item>
+    </string-array>
+    <string-array name="allow_anim_entriesvalue_list_preference">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+</resources>

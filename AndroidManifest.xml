@@ -49,6 +49,7 @@
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".IAskActivity"></activity>
         <activity android:name=".PageActivity"></activity>
+        <activity  android:name=".voice.SettingPreferenceActivity"></activity>
     </application>
 
 </manifest>

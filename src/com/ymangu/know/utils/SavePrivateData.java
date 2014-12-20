@@ -222,8 +222,8 @@ public class SavePrivateData {
 	public static double getLon() {
 		return SavePrivateData.loadDoubleKey(LON, 0);
 	}
-	public static String getMyName() {
-		String name = SavePrivateData.loadStringKey(SavePrivateData.MY_NAME, context.getString(R.string.master));
+	public static String getMyName(Context ctx) {
+		String name = SavePrivateData.loadStringKey(SavePrivateData.MY_NAME,  ctx.getString(R.string.master));
 		return name;
 	}
 	@Deprecated

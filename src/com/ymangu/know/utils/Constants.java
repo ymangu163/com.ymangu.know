@@ -1,5 +1,7 @@
 package com.ymangu.know.utils;
 
+import android.os.Environment;
+
 public class Constants {
 
 	public static final boolean IS_DEBUG = true;
@@ -67,6 +69,18 @@ public class Constants {
 
 		}
 	    
+	    public static final  int LOGIN_REQUEST_CODE = 189;
+	    public static final  String APP_189_ID = "189_appid";	    
+	    public static final String APP_189_SECRET = "189_app_secret";
 	    
+	    public static final String IMAGE_PATH = "image_path";
+	    private static final String IMAGE_PATH_DIR = "/.10000know/img/";
+	    private static final String IMAGE_APP_PATH_DIR = "/.10000know/app_img/";
+	    private static final String APP_LOG_PATH_DIR = "/.10000know/log/";
+	    
+	    
+	    public static final String IMAGE_CACHE_PATH = Environment.getExternalStorageDirectory() + IMAGE_PATH_DIR;
+	    public static final String IMAGE_APP_PATH = Environment.getExternalStorageDirectory() + IMAGE_APP_PATH_DIR;
+	    public static final String APP_LOG_PATH = Environment.getExternalStorageDirectory() + APP_LOG_PATH_DIR;
 	    
 }

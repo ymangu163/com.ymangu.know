@@ -26,14 +26,20 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.ymangu.know.adapter.ViewPagerAdapter;
+import com.ymangu.know.recognizer.VoiceSpeechHelper;
+import com.ymangu.know.ui.ShareImageTask;
+import com.ymangu.know.utils.ActivityUtil;
+import com.ymangu.know.utils.AppHelper;
 import com.ymangu.know.utils.BroadcastHelper;
 import com.ymangu.know.utils.Constants;
+import com.ymangu.know.utils.DialogUtil;
 /**
  * 让ViewPager滑动activity
  * 一般情况下，ViewPager滑动view或者是Fragment
  * 滑动的activity的生命周期方法只有onCreate会被调用，onResume ... 不会被调用
  */
 import com.ymangu.know.utils.DensityUtil;
+import com.ymangu.know.voice.SettingPreferenceActivity;
 
 /**
  * . Activity 与Fragment 方式使用 SlidingMenu的不同
@@ -58,7 +64,7 @@ public class PageActivity extends Activity implements OnClickListener {
 	@ViewInject(R.id.setting_layout)
 	private LinearLayout settingLayout;
 	
-	
+	protected static VoiceSpeechHelper voiceHelper;
 	private LocalActivityManager lam;
 	private SlidingMenu sm;
 	private boolean animState = true;  //记住动画的状态
@@ -133,6 +139,14 @@ public class PageActivity extends Activity implements OnClickListener {
 	private void initViews() {
 		moreBtn.setOnClickListener(this);
 		settingLayout.setOnClickListener(this);   //添加点击事件
+		
+		//subMenu 的4个按钮的点击监听
+		findViewById(R.id.setting_layout).setOnClickListener(this);
+    	findViewById(R.id.login_layout).setOnClickListener(this);
+    	findViewById(R.id.help_layout).setOnClickListener(this);
+    	findViewById(R.id.update_layout).setOnClickListener(this);
+    	findViewById(R.id.share_icon_layout).setOnClickListener(this);
+		
 		
 	}
 
@@ -265,23 +279,58 @@ public class PageActivity extends Activity implements OnClickListener {
 		case R.id.more_btn:
 			//触发动画，打开动画或者关闭动画
 			if (animState) { 	//true 为 执行向下动画
-				animState = false;
-				subMenu.setVisibility(View.VISIBLE);
-				subMenu.startAnimation(topDownAnim);  //绑定View 开启动画
+				showSubMenu();  
 				
 			}else{//false 为 执行向上动画
-				animState = true;
-				subMenu.startAnimation(topUpAnim);
+				hideSubMenu();   //隐藏子菜单
 			}
 					
 			break;
-		case R.id.setting_layout:
+		case R.id.setting_layout:   
 			Toast.makeText(getApplicationContext(), "点击了setting 按钮", 0).show();
+			
+			hideSubMenu();   //隐藏子菜单			
+			ActivityUtil.goToActivity(this, SettingPreferenceActivity.class);
+			break;			
+			
+		case R.id.login_layout:	
+			hideSubMenu();   
+			 DialogUtil.showLoginDialog(this);
+			break;
+		case R.id.help_layout:
+			hideSubMenu();   
+			 sm.toggle();  //显示滑动菜单
+			break;
+			
+			// 更新 apk
+		case R.id.update_layout:  
+			hideSubMenu();   
+			AppHelper.hasUpdate(this,true);   //去下载新版本的apk，并安装
+			break;
+		
+			//一键分享截图
+		case R.id.share_icon_layout:	
+			View view = getWindow().getDecorView(); 
+			new ShareImageTask(this,voiceHelper,view).execute();   //分享
+			hideSubMenu();
+			
 			break;
 		default:
 			break;
 		
 		}
+	}
+	
+	//显示子菜单
+	private void showSubMenu() {  
+		animState = false;
+		subMenu.setVisibility(View.VISIBLE);
+		subMenu.startAnimation(topDownAnim);  //绑定View 开启动画
+	}
+
+	private void hideSubMenu() {  //false 为 执行向上动画
+		animState = true;
+		subMenu.startAnimation(topUpAnim);
 	}
 	
 	// 在onDestroy()中 记得要销毁广播，不然后报错

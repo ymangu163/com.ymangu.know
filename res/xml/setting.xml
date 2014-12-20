@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:key="set_voice_recognition"
+        android:title="语音识别引擎设置" >
+        <ListPreference
+            android:key="@string/choose_voice_recognition"
+            android:title="语音识别引擎" 
+            android:defaultValue="0"
+            android:dialogTitle="语音识别引擎"
+            android:entries="@array/voice_recognition_entries_list_preference"
+            android:entryValues="@array/voice_recognition_entriesvalue_list_preference"
+            android:summary="选择语音识别引擎"
+            />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="set_voice_speech"
+        android:title="语音播报设置" >
+        <ListPreference
+            android:key="@string/choose_voice_speech"
+            android:title="选择语音播报" 
+            android:defaultValue="0"
+            android:dialogTitle="语音播报"
+            android:entries="@array/voice_speech_entries_list_preference"
+            android:entryValues="@array/voice_speech_entriesvalue_list_preference"
+            android:summary="选择语音播报"
+            />
+        <ListPreference
+            android:key="@string/choose_voice_role"
+            android:title="讯飞语音播报设置" 
+            android:defaultValue="vinn"
+            android:dialogTitle="播报声音"
+            android:entries="@array/preference_entries_tts_role"
+            android:entryValues="@array/preference_values_tts_role"
+            android:summary="楠楠(女童普通话)"
+            />
+        
+        <Preference
+            android:key="@string/set_tingting"
+            android:title="@string/set_tingting_title" 
+            android:summary="@string/to_tingting_setting"
+            />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="name_setting"
+        android:title="个人设置" >
+        <EditTextPreference
+            android:key="@string/my_name"
+            android:title="我的称呼" 
+            android:defaultValue="主人"
+            android:summary="设值我的称呼"
+            >
+        </EditTextPreference>
+        
+        <ListPreference
+            android:key="@string/allow_anim"
+            android:title="是否启用动画" 
+            android:defaultValue="1"
+            android:dialogTitle="动画"
+            android:entries="@array/allow_anim_entries_list_preference"
+            android:entryValues="@array/allow_anim_entriesvalue_list_preference"
+            android:summary="是否启用动画"
+            />
+        <!-- 
+        <EditTextPreference
+            android:key="@string/robot_name"
+            android:title="机器人名字" 
+            android:defaultValue="助手"
+            android:summary="设值机器人名字(敬请期待下个版本)"
+            >
+        </EditTextPreference>
+         -->
+        <Preference
+            android:key="@string/plz_login_key"
+            android:title="@string/plz_login" 
+            android:summary="@string/plz_login_more"
+            />
+    </PreferenceCategory>
+
+</PreferenceScreen>
