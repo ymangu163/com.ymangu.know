@@ -1,5 +1,9 @@
 package com.ymangu.know;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -10,6 +14,8 @@ import android.widget.TextView;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.ymangu.know.adapter.IAskFragmentAdapter;
+import com.ymangu.know.fragment.IAskFragment;
+import com.ymangu.know.utils.Constants;
 
 public class IAskActivity extends FragmentActivity  implements  OnClickListener{
 	@ViewInject(R.id.iask_main_view_pager)
@@ -35,6 +41,7 @@ public class IAskActivity extends FragmentActivity  implements  OnClickListener{
 		viewPager.setAdapter(fragmentAdapter);
 		viewPager.setOnPageChangeListener(changeListener); //设置viewPager滑动监听事件
 		
+		registerBroadcast();
 		
 		//TextView 的点击监听
 		iask_ask_text.setOnClickListener(this);
@@ -42,6 +49,51 @@ public class IAskActivity extends FragmentActivity  implements  OnClickListener{
 		iask_person_text.setOnClickListener(this);
 		
 	}
+	//注册广播
+	private void registerBroadcast() {
+		   // 注册语音识别的结果接收广播 
+		   IntentFilter intentFilterVoice = new IntentFilter(Constants.VOICE_RECOGNITION_RESULT_ACTION);
+	        intentFilterVoice.addCategory(Intent.CATEGORY_DEFAULT);	      
+	        this.registerReceiver(voiceRecognitionReceiver, intentFilterVoice);
+		
+		//注册activity销毁的广播
+		IntentFilter destoryFilter = new IntentFilter(Constants.ACTIVITY_DESTORY_ACTION);
+		destoryFilter.addCategory(Intent.CATEGORY_DEFAULT);
+		registerReceiver(destoryReceive, destoryFilter);
+		
+	}
+	
+	private BroadcastReceiver voiceRecognitionReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(Constants.VOICE_RECOGNITION_RESULT_ACTION)) {
+				String result = intent.getStringExtra(Constants.VOICE_RECOGNITION_RESULT);
+				IAskFragment.updateCompleted(result);
+			}
+		}
+		
+	};
+	
+	
+	/**
+	 * 相当于activity的destory方法
+	 */
+	private BroadcastReceiver destoryReceive = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(Constants.ACTIVITY_DESTORY_ACTION)) {
+				
+				unregisterReceiver(voiceRecognitionReceiver);
+				unregisterReceiver(this);//自杀
+				
+			}
+		}
+	};
+	
+	
+	
+	
 	private ViewPager.OnPageChangeListener changeListener = new ViewPager.OnPageChangeListener () {
 
 		@Override

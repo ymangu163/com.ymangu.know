@@ -1,8 +1,11 @@
 package com.ymangu.know.fragment;
 
 import com.ymangu.know.R;
+import com.ymangu.know.recognizer.VoiceRecognizerFactory;
 import com.ymangu.know.server.Config;
+import com.ymangu.know.utils.Constants;
 import com.ymangu.know.utils.DialogUtil;
+import com.ymangu.know.utils.MyToast;
 import com.ymangu.know.utils.SavePrivateData;
 
 import android.os.Bundle;
@@ -18,8 +21,8 @@ import android.widget.TextView.OnEditorActionListener;
 
 public class IAskFragment extends BaseFragment implements OnClickListener {
 
-	private AutoCompleteTextView iaskTextCompleted;
-
+	private static AutoCompleteTextView iaskTextCompleted;
+	private VoiceRecognizerFactory voiceRecognizerFactory;
 	@Override
 	protected View initView(LayoutInflater inflater) {
 		rootView  = inflater.inflate(R.layout.iask_ask_fragment,null);
@@ -36,8 +39,9 @@ public class IAskFragment extends BaseFragment implements OnClickListener {
 		 //声音的按钮
 		Button voiceStart= (Button) rootView.findViewById(R.id.voice_btn);
 		  voiceStart.setOnClickListener(this);
-		
-		
+		  //生成语音识别对象
+		  voiceRecognizerFactory = new VoiceRecognizerFactory(ctx);
+	
 		
 	}
 	
@@ -69,16 +73,40 @@ public class IAskFragment extends BaseFragment implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.voice_btn:
-				
+			/**
+			 * . 声音识别成功后，发送广播，在Activity中接收广播，再把结果传给 Fragment，更新UI
+			 **/
+			voiceRecognizerFactory.startRecognition();
 			break;
-		
-		
-		
+		case R.id.iask_edit_text:
+			//设置软键盘 的状态
+			Constants.Data.SOFT_INPUT_STATU = true;
+			break;
+		case R.id.submit_ask_btnX:  //提交按钮
+			String content = iaskTextCompleted.getText().toString();
+			if (content != null && !"".equals(content)) {
+				 //提交到服务器
+				
+			} else {
+				MyToast.showL(ctx, ctx.getString(R.string.plz_input_content_submit));
+			}
+			
+			break;
+		default:
+			break;
 		
 		}
 		
 		
 		
+		
+	}
+
+	public static void updateCompleted(String result) {
+		if (result != null && !"".equals(result)) {
+			iaskTextCompleted.setText(result);
+    		
+	}
 		
 	}
 	

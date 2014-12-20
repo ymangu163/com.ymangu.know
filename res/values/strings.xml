@@ -258,5 +258,30 @@
     <string name="allow_anim">allow_anim</string>
     <string name="my_name">my_name</string>
     <string name="robot_name">robot_name</string>
+    
+    <string name="preference_key_iat_engine">iat_engine</string>
+    <string name="preference_title_iat_engine">听写引擎</string>
+    
+    <string name="preference_default_iat_engine">sms</string>
+
+<string name="preference_dialog_title_iat_engine">选择听写引擎</string>
+<string name="preference_key_poi_province">poi_province</string>
+<string name="preference_title_poi_province">地图搜索省份</string>
+
+<string name="preference_default_poi_province">全选</string>
+<string name="preference_dialog_title_poi_province">选择地图搜索省份</string>
+<string name="preference_key_poi_city">poi_city</string>
+<string name="preference_title_poi_city">地图搜索城市</string>
+    
+<string name="preference_default_poi_city">全选</string>
+<string name="preference_dialog_title_poi_city">选择地图搜索城市</string>
+<string name="preference_key_iat_rate">iat_rate</string>
+<string name="preference_title_iat_rate">录音采样率</string>
+
+<string name="preference_default_iat_rate">rate16k</string>
+<string name="preference_dialog_title_iat_rate">选择听写采样率</string>
+<string name="preference_key_iat_vad">iat_vad</string>
+<string name="preference_title_iat_vad">启用端点检测</string>
+
 
 </resources>
