@@ -32,4 +32,6 @@ public class Constants {
 	
 	public static final String XUNFEI_APPID = "5212ef0a";
 	
+	 public static final String SHARE_PREFERENCES_NAME = "ymangu.voice";
+	
 }

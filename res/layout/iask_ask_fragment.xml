@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/list_bg_color"
+    android:fillViewport="true" >
+
+    <LinearLayout
+           android:id="@+id/input_layout"
+           android:layout_width="match_parent"
+           android:layout_height="90dp"
+           android:orientation="vertical"
+           android:layout_marginTop="20dp"
+           android:layout_marginLeft="40dp"
+           android:layout_marginRight="40dp"
+           >
+        <TextView
+            android:id="@+id/answer_count"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="累计解答问题：12341515 个问题"
+               android:textSize="15sp"
+               android:textColor="@color/gray"
+               android:layout_marginTop="7dp"
+               />
+        
+        <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal"
+            android:layout_below="@id/answer_count"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="20dp"
+           >
+            
+            <AutoCompleteTextView
+               android:id="@+id/iask_edit_text"
+               style="@style/my_middle_edittext_style"
+               android:layout_width="match_parent"
+               android:layout_height="50dp"
+               android:hint="说出你的问题"
+               android:imeOptions="actionSend"
+               android:cursorVisible="true"
+               android:focusable="true"
+               android:clickable="true"
+               android:textCursorDrawable="@drawable/cursor_color"
+               android:paddingLeft="8dp"
+               android:textColor="@color/white"
+               android:textColorHint="@color/white"
+               android:singleLine="true"
+               />
+            <!-- android:ems  设置TextView的宽度为N个字符的宽度。这里测试为一个汉字字符宽度 -->
+		     
+        <Button
+                android:id="@+id/voice_btn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@drawable/mic_btn_bg" 
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                />
+        </RelativeLayout>
+     </LinearLayout>
+     
+    <Button 
+            android:id="@+id/submit_ask_btnX"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/input_layout"
+            android:layout_marginTop="20dp"
+            android:text="提交问题"
+            android:background="@drawable/green_btn_bg"
+            android:textSize="18sp"
+            />
+     
+</RelativeLayout>
